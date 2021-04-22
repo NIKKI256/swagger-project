@@ -2,32 +2,31 @@
   <div id="app">
     <v-app>
       <v-navigation-drawer app>
-        <!-- -->
+        <AllUsers/>
       </v-navigation-drawer>
 
       <v-app-bar app>
-        <!-- -->
+        <SearchPost/>
       </v-app-bar>
 
-      <!-- Sizes your content based upon application components -->
       <v-main>
-        <!-- Provides the application the proper gutter -->
         <v-container fluid>
-          <!-- If using vue-router -->
           <router-view></router-view>
         </v-container>
       </v-main>
-
-      <v-footer app>
-        <!-- -->
-      </v-footer>
     </v-app>
   </div>
 </template>
 
 <script>
+import AllUsers from './views/AllUsers'
+import SearchPost from './views/SearchPost'
 export default {
   name: "App",
+  components:{
+    AllUsers,
+    SearchPost
+  }
 };
 </script>
 

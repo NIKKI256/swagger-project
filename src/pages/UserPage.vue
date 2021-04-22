@@ -25,10 +25,8 @@ export default {
     },
     async created(){
         try {            
-            const userData = await this.$ApiUsers.users.getUserData()
-
-            this.userInfo = userData.data
-
+            const userData = (await this.$ApiUsers.users.getUserData()).data
+            this.userInfo = userData
             this.isLoaderVisible = false
         } catch (error) {
             alert('Something is wrong')

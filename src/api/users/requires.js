@@ -6,6 +6,9 @@ export default function(instance){
         login(payload){
             return instance.post('auth',payload)
         },
+        getAllUsers(){
+            return instance.get('users')
+        },
         getUserData(){
             return instance.get('auth/user')
         },

@@ -134,8 +134,7 @@ export default {
   position: absolute;
   left: 45%;
   top: 40%;
-  margin-left: -100px;
-  margin-top: -75px;
+  transition: 1s;
 }
 
 .modal_container {
@@ -150,5 +149,18 @@ export default {
   display: flex;
   justify-content: space-between;
   width: 100%;
+}
+
+@media (max-width:1263px){
+  .modal {
+    left: 35%;
+    top: 30%;
+  }
+}
+
+@media (max-width:770px){
+  .modal {
+    left: 10%;
+  }
 }
 </style>

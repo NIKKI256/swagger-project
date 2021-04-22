@@ -1,35 +1,47 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import PostsApi from '../api/posts/index'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state:{
-        user:null,
-        user_data:null
+        user:{},
+        posts:[],
+        user_token:null,
     },
     getters:{
         GET_USER(state){
             return state.user
         },
-        GET_USER_DATA(state){
-            return state.user_data
+        GET_POSTS(state){
+            return state.posts
+        },
+        GET_USER_TOKEN(state){
+            return state.user_token
         }
     },
     mutations:{
         SET_USER(state,payload){
             state.user = payload
         },
-        SET_USER_DATA(state,payload){
-            state.user_data = payload
+        SET_POSTS(state,payload){
+            state.posts = payload
+        },
+        SET_USER_TOKEN(state,payload){
+            state.user_token = payload
         }
     },
     actions:{
-        set_user({commit},payload){
-            commit('SET_USER',payload)
+        // async GetUserData({commit}){
+        //     const {data} = await 
+        // },
+        async GetAllPosts({commit}){
+            const { data } = await PostsApi.posts.getAllPosts()
+            commit('SET_POSTS',data)
         },
-        set_user_data({commit},payload){
-            commit('SET_USER_DATA',payload)
-        },
+        set_user_token({commit},payload){
+            commit('SET_USER_TOKEN',payload)
+        }
     }
 })

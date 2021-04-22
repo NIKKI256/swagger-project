@@ -6,9 +6,9 @@
       v-if="loading"
     ></v-progress-linear>
     <h1 class="font-weight-medium">
-      {{ reg_log ? "Check in" : "Enter system" }}
+      {{ reg_log ? "Check in" : "Sign in" }}
     </h1>
-    <v-form ref="form" class="auth-window" v-if="!reg_log">
+    <v-form ref="form" v-if="!reg_log">
       <v-text-field label="Email" v-model="form.email"></v-text-field>
 
       <v-text-field label="Password" v-model="form.password"></v-text-field>
@@ -24,7 +24,7 @@
       </v-btn>
     </v-form>
 
-    <v-form ref="form" class="auth-window" v-if="reg_log">
+    <v-form ref="form" v-if="reg_log">
       <v-text-field
         label="Login"
         v-model="form.name"
@@ -73,6 +73,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email, minLength } from "vuelidate/lib/validators";
+import {mapActions} from 'vuex'
 
 export default {
   mixins: [validationMixin],
@@ -145,12 +146,14 @@ export default {
     },
   },
   methods: {
+    ...mapActions(['set_user_token']),
     clearFields() {
       this.form.email = "";
       this.form.password = "";
       this.form.name = "";
     },
     changeChoose() {
+      this.clearFields();
       this.reg_log = !this.reg_log;
     },
     async register() {
@@ -160,14 +163,10 @@ export default {
 
         this.loading = false;
 
-        this.$store.dispatch("set_user", "user");
-        this.$store.dispatch("set_user_data", data);
-
-        localStorage.setItem("user", "user");
-
+        this.set_user_token(data);
         this.clearFields();
-
         this.changeChoose();
+        
         alert("Success! \nEnter your data again!");
       } catch (error) {
         this.loading = false;
@@ -186,13 +185,9 @@ export default {
         ).data;
         this.loading = false;
 
-        this.$store.dispatch("set_user", "user");
-        this.$store.dispatch("set_user_data", data);
+        this.set_user_token(data.token);
 
-        localStorage.setItem("user", "user");
-
-        const user_data = this.$store.getters.GET_USER_DATA;
-        localStorage.setItem("token", user_data.token);
+        localStorage.setItem("token", data.token);
 
         this.$router.push({ name: "PostsPage" });
         this.clearFields();
@@ -203,35 +198,20 @@ export default {
       }
     },
     guestEnter() {
-      localStorage.setItem("user", "guest");
       this.$router.push({ name: "PostsPage" });
     },
   },
 };
 </script>
 
-<style scoped>
-.auth-window {
-  margin-top: 15px;
-  width: 445px;
-}
-
+<style scoped lang="scss">
 .container {
-  margin: auto;
-  padding: 20px;
-  width: 30%;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
   background-color: #e3f2fd;
   border-radius: 5px;
-
+  box-shadow: 0px 0px 10px 10px #ccc;
   transition: 1s;
-}
-
-.container:hover {
-  background: #e0f7fa;
+  &:hover {
+    background: #e0f7fa;
+  }
 }
 </style>

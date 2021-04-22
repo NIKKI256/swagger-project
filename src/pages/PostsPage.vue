@@ -1,10 +1,10 @@
 <template>
-  <div class="main-content">
+  <div>
     <h1>
-      {{ user.state == "user" ? "Posts for users" : "Posts for guests" }}
+      {{ token ? "Posts for users" : "Posts for guests" }}
     </h1>
-    <div class="btns">
-      <v-btn color="warning" class="mt-2" block @click="exit">
+    <div class="btns mt-2">
+      <v-btn color="warning" block @click="exit">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -19,14 +19,14 @@
           <path d="M9 9a1 1 0 1 0 2 0 1 1 0 0 0-2 0z" />
         </svg>
         <span class="ml-1">
-          {{ user.state == "user" ? "Logout" : "Authorization window" }}
+          {{ token == "user" ? "Logout" : "Authorization window" }}
         </span>
       </v-btn>
 
       <v-btn
         color="#90CAF9"
         class="mt-2"
-        v-if="user.state == 'user'"
+        v-if="token"
         @click="$router.push({ name: 'UserPage' })"
       >
         <svg
@@ -50,7 +50,7 @@
       <v-btn
         color="primary"
         class="mt-2"
-        v-if="user.state == 'user'"
+        v-if="token"
         @click="isModalVis = true"
       >
         <svg
@@ -71,14 +71,13 @@
         <span class="ml-1">Add post</span>
       </v-btn>
     </div>
-    <div class="switch mt-2" v-if="user.state == 'user'">
+    <div class="switch mt-2" v-if="token">
       <v-switch v-model="toggle" inset @change="switchToggle"></v-switch>
       <h3 class="switch-text">Only my posts</h3>
     </div>
     <AllPosts
       class="mt-2"
       :posts="posts"
-      :checkUser="user.state"
       :user_id="user_id"
       @deletePost="deletePost"
     />
@@ -90,15 +89,15 @@
 import ModalAdd from "../components/ModalAdd";
 import AllPosts from "../components/AllPosts";
 
+import {mapActions,mapGetters} from 'vuex'
+
 export default {
   data() {
     return {
-      isModalVis: false,
-      user: {
-        state: false,
-      },
       posts: [],
       user_id: null,
+      token:false,
+      isModalVis: false,
       toggle: false,
     };
   },
@@ -106,10 +105,17 @@ export default {
     AllPosts,
     ModalAdd,
   },
+  computed:{
+    ...mapGetters(['GET_POSTS'])
+  },
   methods: {
+    ...mapActions(['GetAllPosts']),
     exit() {
       this.$router.push({ name: "MainPage" });
       localStorage.clear();
+    },
+    close() {
+      this.isModalVis = false;
     },
     async deletePost(id) {
       try {
@@ -118,9 +124,6 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    },
-    close() {
-      this.isModalVis = false;
     },
     async addPost(post) {
       try {
@@ -135,11 +138,10 @@ export default {
     async switchToggle() {
       try {
         if (this.toggle) {
-          this.posts = (
-            await this.$ApiPosts.posts.filterPosts(this.user_id)
-          ).data;
+          this.posts = (await this.$ApiPosts.posts.filterPosts(this.user_id)).data;/////////user in vuex
         } else {
-          this.posts = (await this.$ApiPosts.posts.getAllPosts()).data;
+          await this.GetAllPosts()
+          this.posts = this.GET_POSTS
         }
       } catch (error) {
         alert("Something is wrong");
@@ -148,21 +150,24 @@ export default {
     },
   },
   async created() {
-    this.$store.dispatch("set_user", localStorage.user);
-    this.$set(this.user, "state", this.$store.getters.GET_USER);
-
-    try {
-      this.posts = (await this.$ApiPosts.posts.getAllPosts()).data;
-    } catch (error) {
-      alert("Something is wrong");
-      console.log(error);
-    }
-
-    if (localStorage.user != "guest") {
+    if (localStorage.token) {
       try {
+        await this.GetAllPosts()
+        this.posts = this.GET_POSTS
         const userData = (await this.$ApiUsers.users.getUserData()).data;
-        this.user_id = userData._id;
+        this.user_id = userData._id
+        this.token = true
       } catch (error) {
+        alert("Something is wrong");
+        console.log(error);
+      }
+    }
+    else {
+      try {
+        await this.GetAllPosts()
+        this.posts = this.GET_POSTS
+      } catch (error) {
+        alert("Something is wrong");
         console.log(error);
       }
     }
@@ -171,11 +176,6 @@ export default {
 </script>
 
 <style scoped>
-.main-content {
-  width: 30%;
-  margin: auto;
-}
-
 .switch {
   height: 40px;
   display: flex;
@@ -186,6 +186,5 @@ export default {
 .btns {
   display: flex;
   flex-direction: column;
-  margin: auto;
 }
 </style>

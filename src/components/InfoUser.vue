@@ -22,20 +22,19 @@
       </svg>
       <span class="ml-1">Posts page</span>
     </v-btn>
-    <div class="avatar">
-      <div class="field__wrapper">
+    <div>
+      <div class="mt-2">
         <input
           name="file"
           type="file"
           ref="file"
-          id="field__file-2"
           class="field field__file"
           @change="putAvatar(userInfo._id)"
         />
         <DragDrop @upload_avatar="upload_avatar" />
       </div>
     </div>
-    <div class="content">
+    <div class="content mt-2">
       <img v-if="noAvatar" class="user-avatar" :src="userInfo.avatar" />
       <img v-else class="user-avatar" :src="userInfo.avatar" />
       <h2>Login: {{ userInfo.name }}</h2>
@@ -130,46 +129,15 @@ export default {
 <style scoped>
 .content {
   background-color: #fff176;
-  width: 30%;
-  margin: 15px auto;
   border: solid 1px #fbc02d;
   border-radius: 15px;
   padding: 5px;
-}
-
-.avatar img {
-  max-width: 250px;
-  max-height: 250px;
-}
-
-.field__wrapper {
-  width: 10%;
-  position: relative;
-  margin: auto;
-  text-align: center;
 }
 
 .field__file {
   opacity: 0;
   visibility: hidden;
   position: absolute;
-}
-
-.field__file-button {
-  width: 100%;
-  height: 60px;
-  background: #1bbc9b;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.5s;
-}
-
-.field__file-button:hover {
-  background: #159078;
 }
 
 .user-avatar {
@@ -179,4 +147,5 @@ export default {
   max-width: 150px;
   max-height: 150px;
 }
+
 </style>

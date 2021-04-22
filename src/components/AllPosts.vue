@@ -9,7 +9,7 @@
           <v-btn
             class="mt-1"
             color="#F44336"
-            v-if="checkUser == 'user' && post.postedBy == user_id"
+            v-if="token && post.postedBy == user_id"
             @click="deletePost(post._id)"
           >
             <svg
@@ -40,7 +40,7 @@
           <v-btn
             class="mt-1"
             color="warning"
-            v-if="checkUser == 'user' && post.postedBy == user_id"
+            v-if="token && post.postedBy == user_id"
             @click="openModal(post._id)"
           >
             <svg
@@ -72,7 +72,8 @@ export default {
   data() {
     return {
       isVisibleModal: false,
-      prop_id:null
+      prop_id:null,
+      token:false
     };
   },
   components: {
@@ -83,10 +84,6 @@ export default {
     posts: {
       type: Array,
       default: () => [],
-    },
-    checkUser: {
-      type: String,
-      default: "guest",
     },
     user_id: {
       type: String,
@@ -114,13 +111,19 @@ export default {
       this.$router.go(0)
     }
   },
+  created(){
+    if(localStorage.token){
+      this.token = true
+    }
+  }
 };
 </script>
 
 <style scoped>
 .post {
-  border-radius: 5px;
   border: solid 1px #64b5f6;
+  border-radius: 5px;
+  box-shadow: 0 0 2px 2px #ccc;
   background: #bbdefb;
   padding: 5px;
 }
