@@ -52,28 +52,84 @@
         </svg>
       </v-btn>
     </div>
-    <!-- <div class="input-group">
+    <div class="input-group">
       <v-text-field
-        label="Search"
-        v-if="search"
+        label="Search of post"
+        v-if="showInput"
         v-model="textFilter"
-        @input="filterPosts(textFilter)"
+        @input="filterPosts"
+        @blur="(sugestPosts = []), (textFilter = '')"
       ></v-text-field>
-    </div> -->
+      <ul
+        class="autocomplete-result-list"
+        v-for="(item, i) in sugestPosts"
+        :key="i"
+      >
+        <li class="li-posts">
+          <span v-html="item.title"></span>
+          <br />
+          <span v-html="item.description"></span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
+      sugestPosts: [],
       textFilter: "",
-      search: false,
     };
   },
+  computed: {
+    ...mapGetters(["GET_POSTS"]),
+    showInput() {
+      if (this.$route.name === "PostsPage" && localStorage.token) {
+        return true;
+      }
+      return false;
+    },
+  },
   methods: {
-    ...mapActions(["set_filter_text"]),
+    filterPosts() {
+      this.sugestPosts = this.GET_POSTS.filter(
+        (f) =>
+          f.title
+            .toLowerCase()
+            .includes(this.textFilter.trim().toLowerCase()) ||
+          f.description
+            .toLowerCase()
+            .includes(this.textFilter.trim().toLowerCase())
+      ).map((i) => {
+        // const search = this.textFilter.toLowerCase();
+
+        return {
+          title: i.title
+            .toLowerCase()
+            .replace(this.textFilter.toLowerCase(), this.textFilter.bold()),
+          description: i.description
+            .toLowerCase()
+            .replace(this.textFilter.toLowerCase(), this.textFilter.bold()),
+        };
+      });
+
+      // function bolding(word) {
+      //   const firstElem = this.textFilter[0];
+      //   const lastElem = this.textFilter[this.textFilter.length - 1];
+      //   word = word.toLowerCase();
+
+      //   for (let i = 0; i < this.sugestPosts.length; i++) {
+      //     if(i == )
+      //   }
+      // }
+
+      if (this.sugestPosts.length == 0) {
+        this.sugestPosts.push({ title: "No results" });
+      }
+    },
     goPosts() {
       if (this.$route.name === "PostsPage") {
         return;
@@ -87,31 +143,41 @@ export default {
         return;
       } else {
         this.$router.push({ name: "MainPage" });
-        this.search = false;
         localStorage.clear();
       }
     },
-    filterPosts(text) {
-      this.set_filter_text(text);
-    },
-  },
-  created() {
-    if (this.$route.name === "PostsPage") {
-      this.search = true;
-    }
   },
 };
 </script>
 
 <style lang="scss">
+ul {
+  list-style-type: none;
+}
 .spec-navigation {
   width: 100%;
   display: flex;
   align-items: center;
 }
 
-// .input-group {
-//   margin-left: 15px;
-//   height: 35px;
-// }
+.input-group {
+  margin-left: 15px;
+  height: 35px;
+  width: 400px;
+}
+
+.li-posts {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 20px;
+  text-align: left;
+  background: #e3f2fd;
+  border: solid 1px #1e88e5;
+  border-radius: 5px;
+  box-shadow: 0 0 10px 1px#1E88E5;
+  &:hover {
+    cursor: pointer;
+    background: #bbdefb;
+  }
+}
 </style>

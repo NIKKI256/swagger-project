@@ -13,7 +13,7 @@ export default function(instance){
             return instance.get('auth/user')
         },
         uploadAvatar({payload,id}){
-            return instance.put(`users/upload/${id}`,payload)
+            return instance.put(`users/upload/${id}`, payload)
         },
         deleteUser(id){
             return instance.delete(`users/${id}`)

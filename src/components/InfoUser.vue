@@ -65,6 +65,9 @@
 
 <script>
 import DragDrop from "./DragDrop";
+
+import { mapActions } from "vuex";
+
 export default {
   data() {
     return {
@@ -80,22 +83,22 @@ export default {
     },
   },
   components: {
-    DragDrop,
+    DragDrop
   },
   methods: {
+    ...mapActions(["DeleteUser",'uploadAvatar']),
     async deleteUser(id) {
-      await this.$ApiUsers.users.deleteUser(id);
+      await this.DeleteUser(id);
       this.$router.push("/");
     },
     async upload_avatar(avatar) {
       const id = this.userInfo._id;
-      this.infoAvatar = avatar;
-
+      
       const fd = new FormData();
       fd.append("avatar", avatar);
 
       try {
-        await this.$ApiUsers.users.uploadAvatar({ payload: fd, id });
+        await this.uploadAvatar({fd, id});
         this.$router.go(0);
       } catch (error) {
         alert("Что-то пошло не так");
@@ -147,5 +150,4 @@ export default {
   max-width: 150px;
   max-height: 150px;
 }
-
 </style>

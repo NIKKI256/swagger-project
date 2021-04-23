@@ -16,6 +16,8 @@
 
 <script>
 import Loader from '../components/Loader'
+import {mapActions, mapGetters} from 'vuex'
+
 export default {
   data() {
     return {
@@ -25,8 +27,15 @@ export default {
   components:{
     Loader
   },
+  computed:{
+    ...mapGetters(['GET_USERS'])
+  },
+  methods:{
+    ...mapActions(['getAllUsers'])
+  },
   async created() {
-    this.users = (await this.$ApiUsers.users.getAllUsers()).data;
+    await this.getAllUsers()
+    this.users = this.GET_USERS
   },
 };
 </script>

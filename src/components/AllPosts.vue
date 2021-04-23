@@ -59,7 +59,12 @@
           </v-btn>
         </div>
       </div>
-      <ModalEdit v-if="isVisibleModal" @close="close" @edit="edit" :post_id="prop_id"/>
+      <ModalEdit
+        v-if="isVisibleModal"
+        @close="close"
+        @edit="edit"
+        :post_id="prop_id"
+      />
     </div>
   </div>
 </template>
@@ -68,12 +73,14 @@
 import Loader from "./Loader";
 import ModalEdit from "./ModalEdit";
 
+import { mapActions } from "vuex";
+
 export default {
   data() {
     return {
       isVisibleModal: false,
-      prop_id:null,
-      token:false
+      prop_id: null,
+      token: false,
     };
   },
   components: {
@@ -91,31 +98,33 @@ export default {
     },
   },
   methods: {
-    close(){
-      this.isVisibleModal = false
+    ...mapActions(["updatePost"]),
+    close() {
+      this.isVisibleModal = false;
     },
     deletePost(id) {
       this.$emit("deletePost", id);
     },
     openModal(id) {
       this.isVisibleModal = true;
-      this.prop_id = id
+      this.prop_id = id;
     },
-    async edit(post){
-      const updatePost = {
-        title:post.title,
-        fullText:post.fullText,
-        description:post.description
-      }
-      await this.$ApiPosts.posts.updatePostById({payload:updatePost,id:post._id})
-      this.$router.go(0)
+    async edit(post) {
+      const id = post._id
+      const update = {
+        title: post.title,
+        fullText: post.fullText,
+        description: post.description,
+      };
+      await this.updatePost({update,id});
+      this.$router.go(0);
+    },
+  },
+  created() {
+    if (localStorage.token) {
+      this.token = true;
     }
   },
-  created(){
-    if(localStorage.token){
-      this.token = true
-    }
-  }
 };
 </script>
 

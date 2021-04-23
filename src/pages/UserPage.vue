@@ -13,6 +13,8 @@
 import InfoUser from '../components/InfoUser'
 import Loader from '../components/Loader'
 
+import {mapActions,mapGetters} from 'vuex'
+
 export default {
     data(){
         return{
@@ -23,10 +25,16 @@ export default {
     components:{
         InfoUser,Loader
     },
+    computed:{
+        ...mapGetters(['GET_USER'])
+    },
+    methods:{
+        ...mapActions(['getUserData'])
+    },
     async created(){
         try {            
-            const userData = (await this.$ApiUsers.users.getUserData()).data
-            this.userInfo = userData
+            await this.getUserData()
+            this.userInfo = this.GET_USER
             this.isLoaderVisible = false
         } catch (error) {
             alert('Something is wrong')

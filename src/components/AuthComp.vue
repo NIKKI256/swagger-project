@@ -73,15 +73,15 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email, minLength } from "vuelidate/lib/validators";
-import {mapActions} from 'vuex'
+import { mapActions,mapGetters } from "vuex";
 
 export default {
   mixins: [validationMixin],
   data() {
     return {
       form: {
-        name: "",
         email: "",
+        name: "",
         password: "",
       },
       reg_log: true,
@@ -104,6 +104,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['GET_USER_TOKEN']),
     nameErrors() {
       const errors = [];
       if (!this.$v.form.name.$dirty) return errors;
@@ -146,7 +147,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['set_user_token']),
+    ...mapActions(["registerUser", "loginUser"]),
     clearFields() {
       this.form.email = "";
       this.form.password = "";
@@ -159,36 +160,30 @@ export default {
     async register() {
       this.loading = true;
       try {
-        const data = await this.$ApiUsers.users.register({ ...this.form });
+        await this.registerUser(this.form);
 
         this.loading = false;
 
-        this.set_user_token(data);
         this.clearFields();
         this.changeChoose();
-        
+
         alert("Success! \nEnter your data again!");
       } catch (error) {
         this.loading = false;
         alert("Something is wrong");
-        console.log(error.response.data);
+        console.error(error);
       }
     },
     async login() {
       this.loading = true;
       try {
-        const data = (
-          await this.$ApiUsers.users.login({
-            email: this.form.email,
-            password: this.form.password,
-          })
-        ).data;
+        const loginForm = {
+          email: this.form.email,
+          password: this.form.password,
+        };
+        await this.loginUser(loginForm);
+
         this.loading = false;
-
-        this.set_user_token(data.token);
-
-        localStorage.setItem("token", data.token);
-
         this.$router.push({ name: "PostsPage" });
         this.clearFields();
       } catch (error) {

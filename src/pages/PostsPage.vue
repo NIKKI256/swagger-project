@@ -89,14 +89,14 @@
 import ModalAdd from "../components/ModalAdd";
 import AllPosts from "../components/AllPosts";
 
-import {mapActions,mapGetters} from 'vuex'
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
     return {
       posts: [],
       user_id: null,
-      token:false,
+      token: false,
       isModalVis: false,
       toggle: false,
     };
@@ -105,11 +105,17 @@ export default {
     AllPosts,
     ModalAdd,
   },
-  computed:{
-    ...mapGetters(['GET_POSTS'])
+  computed: {
+    ...mapGetters(["GET_USER", "GET_POSTS"]),
   },
   methods: {
-    ...mapActions(['GetAllPosts']),
+    ...mapActions([
+      "GetAllPosts",
+      "DeletePost",
+      "AddPost",
+      "FilterPosts",
+      "GetUser",
+    ]),
     exit() {
       this.$router.push({ name: "MainPage" });
       localStorage.clear();
@@ -119,7 +125,7 @@ export default {
     },
     async deletePost(id) {
       try {
-        await this.$ApiPosts.posts.deletePost(id);
+        await this.DeletePost(id);
         this.$router.go(0);
       } catch (error) {
         console.error(error);
@@ -127,7 +133,7 @@ export default {
     },
     async addPost(post) {
       try {
-        await this.$ApiPosts.posts.addPost(post);
+        await this.AddPost(post);
         this.$router.go(0);
         this.close();
       } catch (error) {
@@ -138,34 +144,36 @@ export default {
     async switchToggle() {
       try {
         if (this.toggle) {
-          this.posts = (await this.$ApiPosts.posts.filterPosts(this.user_id)).data;/////////user in vuex
+          await this.FilterPosts(this.user_id);
         } else {
-          await this.GetAllPosts()
-          this.posts = this.GET_POSTS
+          await this.GetAllPosts();
         }
       } catch (error) {
         alert("Something is wrong");
         console.log(error);
       }
+      this.posts = this.GET_POSTS;
     },
   },
   async created() {
     if (localStorage.token) {
       try {
-        await this.GetAllPosts()
-        this.posts = this.GET_POSTS
-        const userData = (await this.$ApiUsers.users.getUserData()).data;
-        this.user_id = userData._id
-        this.token = true
+        await this.GetAllPosts();
+        this.posts = this.GET_POSTS;
+
+        await this.GetUser();
+        const userData = this.GET_USER;
+
+        this.user_id = userData._id;
+        this.token = true;
       } catch (error) {
         alert("Something is wrong");
         console.log(error);
       }
-    }
-    else {
+    } else {
       try {
-        await this.GetAllPosts()
-        this.posts = this.GET_POSTS
+        await this.GetAllPosts();
+        this.posts = this.GET_POSTS;
       } catch (error) {
         alert("Something is wrong");
         console.log(error);

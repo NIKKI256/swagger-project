@@ -42,6 +42,8 @@
 import { validationMixin } from "vuelidate";
 import { required, minLength } from "vuelidate/lib/validators";
 
+import {mapActions,mapGetters} from 'vuex'
+
 export default {
   mixins: [validationMixin],
   data() {
@@ -73,6 +75,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['GET_CURRENT_POST']),
     titleErrors() {
       const errors = [];
       if (!this.$v.post.title.$dirty) return errors;
@@ -115,6 +118,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions(['getPostById']),
     close() {
       this.$emit("close");
     },
@@ -125,7 +129,8 @@ export default {
   },
   async created() {
     this.myId = this.post_id;
-    this.post = (await this.$ApiPosts.posts.getPostById(this.myId)).data;
+    await this.getPostById(this.myId)
+    this.post = this.GET_CURRENT_POST
     this.visible = true;
   },
 };
