@@ -2,11 +2,11 @@
   <div id="app">
     <v-app>
       <v-navigation-drawer app>
-        <AllUsers/>
+        <AllUsers />
       </v-navigation-drawer>
 
       <v-app-bar app>
-        <SearchPost/>
+        <SearchPost />
       </v-app-bar>
 
       <v-main>
@@ -19,14 +19,14 @@
 </template>
 
 <script>
-import AllUsers from './views/AllUsers'
-import SearchPost from './views/SearchPost'
+import AllUsers from "./views/AllUsers";
+import SearchPost from "./views/SearchPost";
 export default {
   name: "App",
-  components:{
+  components: {
     AllUsers,
-    SearchPost
-  }
+    SearchPost,
+  },
 };
 </script>
 
@@ -38,5 +38,17 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+@media print{
+  .v-navigation-drawer__content{
+    position: inherit !important;
+    z-index: 0 !important;
+    visibility: hidden !important;
+  }
+
+  header{
+    visibility: hidden !important;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="spec-navigation">
+  <div class="spec-navigation check">
     <div class="navigation-group">
       <v-btn
         class="mx-2"
@@ -58,14 +58,13 @@
         v-if="showInput"
         v-model="textFilter"
         @input="filterPosts"
-        @blur="(sugestPosts = []), (textFilter = '')"
       ></v-text-field>
       <ul
         class="autocomplete-result-list"
         v-for="(item, i) in sugestPosts"
         :key="i"
       >
-        <li class="li-posts">
+        <li class="li-posts" @click="openPost(item)">
           <span v-html="item.title"></span>
           <br />
           <span v-html="item.description"></span>
@@ -94,6 +93,11 @@ export default {
     },
   },
   methods: {
+    openPost(item) {
+      this.$router.push({ name: "PostPage", params: { id: item._id } });
+      this.sugestPosts = [];
+      this.textFilter = "";
+    },
     filterPosts() {
       this.sugestPosts = this.GET_POSTS.filter(
         (f) =>
@@ -104,9 +108,8 @@ export default {
             .toLowerCase()
             .includes(this.textFilter.trim().toLowerCase())
       ).map((i) => {
-        // const search = this.textFilter.toLowerCase();
-
         return {
+          _id: i._id,
           title: i.title
             .toLowerCase()
             .replace(this.textFilter.toLowerCase(), this.textFilter.bold()),
@@ -115,17 +118,6 @@ export default {
             .replace(this.textFilter.toLowerCase(), this.textFilter.bold()),
         };
       });
-
-      // function bolding(word) {
-      //   const firstElem = this.textFilter[0];
-      //   const lastElem = this.textFilter[this.textFilter.length - 1];
-      //   word = word.toLowerCase();
-
-      //   for (let i = 0; i < this.sugestPosts.length; i++) {
-      //     if(i == )
-      //   }
-      // }
-
       if (this.sugestPosts.length == 0) {
         this.sugestPosts.push({ title: "No results" });
       }
@@ -154,6 +146,7 @@ export default {
 ul {
   list-style-type: none;
 }
+
 .spec-navigation {
   width: 100%;
   display: flex;
