@@ -121,6 +121,9 @@ export default {
       if (this.sugestPosts.length == 0) {
         this.sugestPosts.push({ title: "No results" });
       }
+      if(this.textFilter == ''){
+        this.sugestPosts = []
+      }
     },
     goPosts() {
       if (this.$route.name === "PostsPage") {

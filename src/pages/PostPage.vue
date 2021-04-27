@@ -3,8 +3,23 @@
     <h1>POST PAGE</h1>
     <Loader v-if="loaderVis" />
     <div v-else class="container">
-      <h1>{{ post.title }}</h1>
-      <h2>{{ post.fullText }}</h2>
+      <v-carousel>
+        <v-carousel-item>
+          <v-sheet height="100%" tile>
+            <v-row class="fill-height" align="center" justify="center">
+                <h1 class="h1-slider">{{ post.title }}</h1>
+            </v-row>
+          </v-sheet>
+        </v-carousel-item>
+
+        <v-carousel-item>
+          <v-sheet height="100%" tile>
+            <v-row class="fill-height" align="center" justify="center">
+                <h1 class="h1-slider">{{ post.description }}</h1>
+            </v-row>
+          </v-sheet>
+        </v-carousel-item>
+      </v-carousel>
     </div>
   </div>
 </template>
@@ -44,5 +59,11 @@ export default {
   padding: 10px;
   border-radius: 10px;
   background-color: #bbdefb;
+}
+.theme--dark.v-sheet{
+  background-color: #bbdefb ;
+}
+.h1-slider{
+  max-width: 70%;
 }
 </style>

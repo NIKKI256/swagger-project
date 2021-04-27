@@ -42,13 +42,13 @@ export default {
 
 @media print{
   .v-navigation-drawer__content{
-    position: inherit !important;
-    z-index: 0 !important;
-    visibility: hidden !important;
+    position: inherit;
+    z-index: 0;
+    visibility: hidden;
   }
 
   header{
-    visibility: hidden !important;
+    visibility: hidden;
   }
 }
 </style>

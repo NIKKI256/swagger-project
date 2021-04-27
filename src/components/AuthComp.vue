@@ -209,4 +209,10 @@ export default {
     background: #e0f7fa;
   }
 }
+
+@media print{
+  .container{
+    text-align: center;
+  }
+}
 </style>
